@@ -1,0 +1,75 @@
+
+
+.landing-page-container {
+    width: 100%;
+    padding-top: 150px;
+}
+
+.landing-title {
+    color: black;
+    font-size: 36px;
+    font-family: 'Kalam', cursive;
+    /* margin-top: 250px; */
+}
+
+.login-form {
+    /* margin-top: 50px; */
+    padding-bottom: 200px;
+}
+
+.landing-input-area {
+    margin-top: 15px;
+}
+
+.landing-label {
+    font-size: 18px;
+    color: black;
+    font-family: 'Kalam', cursive;
+    font-weight: 700;
+}
+
+
+.landing-input {
+    /* font-family: 'Kalam', cursive; */
+    background: yellow;
+    color: black;
+    padding-left: 5px;
+}
+
+.password-err {
+    margin-top: 4px;
+    font-size: 12px;
+    color: red;
+    font-family: 'Kalam', cursive;
+}
+
+.landing-login-btn {
+    margin-top: 15px;
+    font-family: 'Kalam', cursive;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
