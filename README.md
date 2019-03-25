@@ -21,6 +21,8 @@ Future improvements
 
 *) Add an edit function()
 
+*) Add signout function()
+
 
 
 
