@@ -27,8 +27,8 @@ class Header extends Component {
   moreItems = event => {
     event.preventDefault();
     let data = {
-      item: this.state.item,
-      store: this.state.store,
+      item: this.state.item.toLowerCase(),
+      store: this.state.store.toLowerCase(),
       qty: this.state.qty
     };
     let user = this.props.userId;
@@ -101,6 +101,14 @@ class Header extends Component {
     }
   };
 
+  editList = () => {
+    this.setState({
+      showDropDownMenu: false
+    });
+    let data = true;
+    this.props.edit(data);
+  };
+
   signOutUser = () => {
     this.props.signOut(this.props.userId, this.props.history);
   };
@@ -143,6 +151,7 @@ class Header extends Component {
             selectStore={this.selectStore}
             signOutUser={this.signOutUser}
             showDropDown={this.showDropdown}
+            editList={this.editList}
           />
         )}
 
@@ -170,7 +179,8 @@ const mapStateToProps = state => {
     storeNames: state.storeNames,
     myStore: state.myStore,
     userId: state.userId,
-    history: state.history
+    history: state.history,
+    editing: state.editing
   };
 };
 
@@ -195,6 +205,12 @@ const mapDispachToProps = dispach => {
       dispach({
         type: "SIGN_OUT",
         payload: { userId, history }
+      });
+    },
+    edit: editing => {
+      dispach({
+        type: "EDIT",
+        payload: { editing }
       });
     }
   };
