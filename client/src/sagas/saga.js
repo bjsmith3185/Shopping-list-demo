@@ -1,9 +1,64 @@
 import { takeLatest, put } from "redux-saga/effects";
 import API from "../utils/API";
 
+
+// opens closes dropdown menu
+function* dropDownAsync(data) {
+   yield put({ type: "SET_DROPDOWN_MENU", val: data.payload });
+}
+
+export function* watchDropdown() {
+  yield takeLatest("SHOW_DROPDOWN_MENU", dropDownAsync);
+}
+
+//------------------------
+// opens closes add new item area
+function* addItemAreaAsync(data) {
+   yield put({ type: "SHOW_ADD_ITEM_AREA", val: data.payload });
+}
+
+export function* watchAddItemArea() {
+  yield takeLatest("SHOW_ADD_ITEM", addItemAreaAsync);
+}
+
+//------------------------
+// opens closes edit item area 
+function* editAreaAsync(data) {
+   yield put({ type: "SHOW_EDIT_AREA", val: data.payload});
+}
+
+export function* watchEditArea() {
+  yield takeLatest("SHOW_EDIT", editAreaAsync);
+}
+
+//------------------------
+// sets myStore from dropdown menu
+function* setStoreAsync(data) {
+  const myData = yield API.selectStore(data.payload.userId, {
+    myStore: data.payload.myStore
+  });
+  yield put({ type: "SET_STORELIST_COUNT_STORE", val: myData.data });
+}
+
+export function* watchSetStore() {
+  yield takeLatest("SET_STORE", setStoreAsync);
+}
+
+//------------------------
+// updating store with value to show update window
+function* editAsync(data) {
+ yield put({ type: "EDIT_ASYNC", val: data.payload } );
+}
+
+export function* watchEdit() {
+  yield takeLatest("EDIT", editAsync);
+}
+
+//---------------------------------------
 //   Adds an item to the shopping collection
 function* addItemAsync(data) {
-  const myData = yield API.addItem(data.val.user, data.val.data);
+  const myData = yield API.addItem(data.payload.user, data.payload.data);
+  myData.data.showAddItemMenu = data.payload.menu.showAddItemMenu;
   yield put({ type: "SET_STORELIST_COUNT_STORE", val: myData.data });
 }
 
@@ -12,6 +67,26 @@ export function* watchAddItem() {
 }
 
 //--------------------------------------------------------
+// canceling the edit window
+function* cancelUpdateAsync(data) {
+ yield put({ type: "EDIT_ASYNC", val: data.payload } );
+}
+
+export function* watchCancelUpdate() {
+  yield takeLatest("CANCEL_UPDATE", cancelUpdateAsync);
+}
+
+//---------------------------------------
+// setting data for item to update
+function* setUpdateItemAsync(data) {
+  yield put({ type: "SET_UPDATE_ITEM_ASYNC", val: data.payload } );
+ }
+ 
+ export function* watchSetUpdateItem() {
+   yield takeLatest("SET_UPDATE_ITEM", setUpdateItemAsync);
+ }
+
+ //---------------------------------------
 //    Load all data when Home page loads
 function* loadDataAsync(data) {
   const myData = yield API.loadData(data.payload.id);
@@ -50,19 +125,6 @@ export function* watchDeleteItem() {
 }
 
 //-------------------------------------------------------------------
-//  select store
-function* setStoreAsync(data) {
-  const myData = yield API.selectStore(data.val.userId, {
-    myStore: data.val.myStore
-  });
-  yield put({ type: "SET_STORELIST_COUNT_STORE", val: myData.data });
-}
-
-export function* watchSetStore() {
-  yield takeLatest("SET_STORE", setStoreAsync);
-}
-//-------------------------------------------------------------------
-
 //   Log in user
 function* logInAsync(data) {
   try {
@@ -107,7 +169,6 @@ export function* watchSignOut() {
 }
 
 //--------------------------------------------------------
-
 //  set history
 function* setHistoryAsync(data) {
   yield put({ type: "SET_HISTORY_ASYNC", val: data.payload.history });
@@ -116,42 +177,20 @@ function* setHistoryAsync(data) {
 export function* watchSetHistory() {
   yield takeLatest("SET_HISTORY", setHistoryAsync);
 }
+
 //---------------------------------------
-
-// updating store with value to show update window
-function* editAsync(data) {
-  // // dont need to go to the server here
-  // just update the store with a value 
-  // to show edit fields
- yield put({ type: "EDIT_ASYNC", val: data.payload } );
-}
-
-export function* watchEdit() {
-  yield takeLatest("EDIT", editAsync);
-}
-//---------------------------------------
-
 //  update/edit list
 function* updateListAsync(data) {
-  const updated = yield API.updateShoppingList(data.val.id, data.val.payload)
+  console.log(data)
+  const updated = yield API.updateShoppingList(data.payload.id, data.payload)
  yield put({ type: "SET_STORELIST_COUNT_STORE", val: updated.data } );
 }
 
 export function* watchUpdateList() {
   yield takeLatest("UPDATE_LIST", updateListAsync);
 }
+
 //---------------------------------------
 
-// canceling the edit window
-function* cancelUpdateAsync(data) {
-  // // dont need to go to the server here
-  // just update the store with a value 
-  // to show edit fields
- yield put({ type: "EDIT_ASYNC", val: data.payload } );
-}
 
-export function* watchCancelUpdate() {
-  yield takeLatest("CANCEL_UPDATE", cancelUpdateAsync);
-}
-//---------------------------------------
 

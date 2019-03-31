@@ -4,120 +4,54 @@ import { connect } from "react-redux";
 import Form from "../Form";
 import Menu from "../Menu";
 import "./Header.css";
+import Edit from "../Edit";
 
 class Header extends Component {
-  state = {
-    showInputForm: false,
-    showDropDownMenu: false,
-    showStores: false,
-    stores: [],
-    item: "",
-    store: "",
-    qty: ""
-  };
-
-  componentDidMount() {
-    console.log(this.props);
-  }
+  componentDidMount() {}
 
   onChange = event => {
     this.setState({ [event.target.name]: event.target.value });
   };
 
-  moreItems = event => {
-    event.preventDefault();
-    let data = {
-      item: this.state.item.toLowerCase(),
-      store: this.state.store.toLowerCase(),
-      qty: this.state.qty
-    };
-    let user = this.props.userId;
-
-    this.props.addItem(user, data);
-    this.setState({
-      item: "",
-      store: "",
-      qty: "",
-      showInputForm: false
-    });
-  };
-
-  showDropdown = () => {
-    if (this.state.showDropDownMenu) {
-      this.setState({
-        showDropDownMenu: false
-      });
+  showMenu = () => {
+    let add = false;
+    let edit = false;
+    let dropDown;
+    if (this.props.showDropdownMenu) {
+      dropDown = false;
     } else {
-      this.setState({
-        showDropDownMenu: true,
-        showInputForm: false
-      });
+      dropDown = true;
     }
+    this.props.showMenuArea(dropDown, add, edit);
   };
 
-  openInputForm = () => {
-    if (this.state.showInputForm) {
-      this.setState({
-        showInputForm: false
-      });
+  showAdd = () => {
+    let add;
+    let edit = false;
+    let dropDown = false;
+    if (this.props.showAddItemMenu) {
+      add = false;
     } else {
-      this.setState({
-        showInputForm: true,
-        showDropDownMenu: false
-      });
+      add = true;
     }
+    this.props.showAddItem(add, edit, dropDown);
   };
 
-  selectStore = store => {
-    const myStore = {
-      userId: this.props.userId,
-      myStore: store
-    };
-    this.props.setStore(myStore);
-    this.setState({
-      showStores: false,
-      showDropDownMenu: false
-    });
-  };
-
-  closeMenu = event => {
-    if (!this.dropdownMenu.contains(event.target)) {
-      this.setState({
-        showMenu: false
-      });
-      document.removeEventListener("click", this.closeMenu);
-    }
-  };
-
-  openStores = store => {
-    if (store) {
-      this.setState({
-        showStores: false
-      });
+  showEdit = () => {
+    let showStatus;
+    if (this.props.editing) {
+      showStatus = false;
     } else {
-      this.setState({
-        showStores: true
-      });
+      showStatus = true;
     }
-  };
-
-  editList = () => {
-    this.setState({
-      showDropDownMenu: false
-    });
-    let data = true;
-    this.props.edit(data);
-  };
-
-  signOutUser = () => {
-    this.props.signOut(this.props.userId, this.props.history);
+    this.props.showEditItem(showStatus);
   };
 
   render() {
     return (
       <div className="header-area">
         <div className="top-area">
-          <div className="left-box text-center" onClick={this.showDropdown}>
+          <div className="left-box text-center" onClick={this.showMenu}>
             <i className="fas fa-bars" />
           </div>
 
@@ -125,11 +59,10 @@ class Header extends Component {
             <div className="top-title text-center">Hey Don't Forget</div>
           </div>
 
-          <div className="right-box text-center" onClick={this.openInputForm}>
+          <div className="right-box text-center" onClick={this.showAdd}>
             <i className="fas fa-plus" />
           </div>
         </div>
-
         {/* Title on small screen  */}
         <div className="text-center bottom-title">Hey Don't Forget</div>
 
@@ -141,29 +74,13 @@ class Header extends Component {
             .join(" ")}
         </div>
 
-        {/* dropdown menu goes here  */}
+        {/* Dropdown Area  */}
 
-        {this.state.showDropDownMenu && (
-          <Menu
-            openStores={this.openStores}
-            showStores={this.state.showStores}
-            stores={this.props.storeNames}
-            selectStore={this.selectStore}
-            signOutUser={this.signOutUser}
-            showDropDown={this.showDropdown}
-            editList={this.editList}
-          />
-        )}
+        {this.props.showDropdownMenu && <Menu />}
 
-        {this.state.showInputForm && (
-          <Form
-            onChange={this.onChange}
-            item={this.state.item}
-            qty={this.state.qty}
-            store={this.state.store}
-            addToList={this.moreItems}
-          />
-        )}
+        {this.props.showAddItemMenu && <Form />}
+
+        {this.props.showEditMenu && <Edit />}
       </div>
     );
   }
@@ -172,14 +89,10 @@ class Header extends Component {
 // this brings in the state to display on this component
 const mapStateToProps = state => {
   return {
+    showDropdownMenu: state.showDropdownMenu,
+    showAddItemMenu: state.showAddItemMenu,
+    showEditMenu: state.showEditMenu,
     name: state.name,
-    countRemaining: state.countRemaining,
-    allList: state.allList,
-    storeList: state.storeList,
-    storeNames: state.storeNames,
-    myStore: state.myStore,
-    userId: state.userId,
-    history: state.history,
     editing: state.editing
   };
 };
@@ -187,30 +100,24 @@ const mapStateToProps = state => {
 // functions to dispatch actions
 const mapDispachToProps = dispach => {
   return {
-    addItem: (user, data) => {
+    showMenuArea: (showDropdownMenu, showAddItemMenu, showEditMenu) => {
       dispach({
-        type: "ADD_ITEM",
-        val: { user: user, data: data }
+        type: "SHOW_DROPDOWN_MENU",
+        payload: { showDropdownMenu, showAddItemMenu, showEditMenu }
       });
     },
 
-    setStore: data => {
+    showAddItem: (showAddItemMenu, showEditMenu, showDropdownMenu) => {
       dispach({
-        type: "SET_STORE",
-        val: data
+        type: "SHOW_ADD_ITEM",
+        payload: { showAddItemMenu, showEditMenu, showDropdownMenu }
       });
     },
 
-    signOut: (userId, history) => {
+    showEditItem: status => {
       dispach({
-        type: "SIGN_OUT",
-        payload: { userId, history }
-      });
-    },
-    edit: editing => {
-      dispach({
-        type: "EDIT",
-        payload: { editing }
+        type: "SHOW_EDIT",
+        payload: { showEditMenu: status }
       });
     }
   };
