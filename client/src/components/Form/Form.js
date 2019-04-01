@@ -4,29 +4,27 @@ import { connect } from "react-redux";
 import "./Form.css";
 
 const formState = {
-  item: '',
-  qty: '',
-  store: '',
-  itemError: '',
-  qtyError: '',
-  storeError: '',
-}
+  item: "",
+  qty: "",
+  store: "",
+  itemError: "",
+  qtyError: "",
+  storeError: ""
+};
 
 class Form extends Component {
   state = formState;
 
   componentDidMount() {}
 
-
-
   handleChange = event => {
     const isCheckbox = event.target.type === "checkbox";
     this.setState({
       [event.target.name]: isCheckbox
-      ? event.target.checked
-      : event.target.value
-    })
-  }
+        ? event.target.checked
+        : event.target.value
+    });
+  };
 
   submit = event => {
     event.preventDefault();
@@ -38,18 +36,18 @@ class Form extends Component {
         qty: this.state.qty
       };
       let user = this.props.userId;
-  
+
       let menu = { showAddItemMenu: false };
-  
+
       this.props.addItem(user, data, menu);
-      this.setState(formState)
+      this.setState(formState);
     }
   };
 
   validate = () => {
-    let itemError = '';
-    let qtyError = '';
-    let storeError = '';
+    let itemError = "";
+    let qtyError = "";
+    let storeError = "";
 
     if (!this.state.item) {
       itemError = "Please enter an item.";
@@ -67,53 +65,18 @@ class Form extends Component {
       this.setState({
         itemError: itemError,
         qtyError: qtyError,
-        storeError: storeError,
-      })
-      return false
+        storeError: storeError
+      });
+      return false;
     }
 
     return true;
-  }
-
-  // add = event => {
-  //   event.preventDefault();
-  //   let data = {
-  //     item: this.state.item.toLowerCase(),
-  //     store: this.state.store.toLowerCase(),
-  //     qty: this.state.qty
-  //   };
-  //   let user = this.props.userId;
-
-  //   let menu = { showAddItemMenu: false };
-
-  //   this.props.addItem(user, data, menu);
-  //   this.setState({
-  //     item: "",
-  //     store: "",
-  //     qty: "",
-
-     
-  //   });
-  // };
-
-    // onChange = event => {
-  //   this.setState({ [event.target.name]: event.target.value });
-  //   // this.validationCheck()
-  // };
-
-  // validationCheck = () => {
-     //   if(!this.state.store === '' && !this.state.item === '') {
-  //     this.setState({
-  //       isValid: false
-  //     })
-  //  } 
-  // }
+  };
 
   render() {
-
     const itemDiv = this.state.itemError ? "line-input-red" : "line-input";
-    const qtyDiv = this.state.qtyError ? "line-input-red" : "line-input" ;
-    const storeDiv = this.state.storeError ? "line-input-red" : "line-input" ; 
+    const qtyDiv = this.state.qtyError ? "line-input-red" : "line-input";
+    const storeDiv = this.state.storeError ? "line-input-red" : "line-input";
 
     return (
       <div className="form-area">
@@ -142,7 +105,7 @@ class Form extends Component {
             type="text"
             placeholder="Qty"
           />
-          <div className="form-error" >{this.state.qtyError}</div>
+          <div className="form-error">{this.state.qtyError}</div>
         </div>
 
         <div className="line-item">
@@ -162,7 +125,6 @@ class Form extends Component {
           <button
             className="text-center form-btn btn btn-info"
             onClick={this.submit}
-            // disabled={this.state.isValid}
           >
             Add
           </button>
